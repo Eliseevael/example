@@ -9,7 +9,46 @@ const CATEGORY_MAP = {
     "sports & fitness": "Спорт и фитнес",
 };
 
-// Функция для загрузки товаров
+// Функция для добавления товара в корзину
+function addToCart(product) {
+    // Получаем текущую корзину из localStorage или создаем пустой массив, если корзина пуста
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Проверяем, если товар уже есть в корзине
+    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+
+    if (existingProductIndex > -1) {
+        // Если товар уже есть в корзине, увеличиваем количество
+        cart[existingProductIndex].quantity += 1;
+    } else {
+        // Если товара нет в корзине, добавляем его
+        product.quantity = 1; // Добавляем количество
+        cart.push(product);
+    }
+
+    // Сохраняем корзину обратно в localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Показать уведомление
+    showNotification('Товар добавлен в корзину!');
+}
+
+// Функция для отображения уведомлений
+function showNotification(message) {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
+    notification.setAttribute('role', 'alert');
+    notification.innerHTML = `${message} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    notifications.appendChild(notification);
+
+    // Удаляем уведомление через 3 секунды
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Загрузка всех товаров при старте страницы
 function loadProducts(query = "", filters = {}, sort = "") {
     let url = `${API_URL}&query=${encodeURIComponent(query)}`;
 
@@ -94,7 +133,7 @@ function loadProducts(query = "", filters = {}, sort = "") {
                                 ${ratingStars} <!-- Рейтинг в виде звезд -->
                                 <span class="text-muted">(${product.rating.toFixed(1)})</span>
                             </div>
-                            <a href="#" class="btn btn-primary">Купить</a>
+                            <button class="btn btn-primary" onclick="addToCart(${JSON.stringify(product)})">Купить</button>
                         </div>
                     </div>
                 `;
@@ -107,7 +146,6 @@ function loadProducts(query = "", filters = {}, sort = "") {
             document.getElementById("catalog").innerHTML = "<p>Произошла ошибка при загрузке данных.</p>";
         });
 }
-
 
 // Загрузка всех товаров при старте страницы
 loadProducts();
@@ -156,7 +194,6 @@ document.getElementById("sort").addEventListener("change", function () {
     loadProducts("", filters, sort); // Загружаем товары с сортировкой
 });
 
-// Основной URL для автодополнения
 // Основной URL для автодополнения
 const AUTOCOMPLETE_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/autocomplete?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
@@ -224,3 +261,62 @@ document.getElementById("search-button").addEventListener("click", function () {
     const sort = document.getElementById("sort").value; // Учитываем выбранный порядок сортировки
     loadProducts(query, {}, sort); // Загружаем товары с учетом поиска
 });
+
+// Функция для обновления корзины на странице
+function updateCart() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContainer = document.getElementById('cart-items'); // Контейнер для отображения товаров в корзине
+
+    cartContainer.innerHTML = ''; // Очищаем контейнер
+
+    if (cart.length === 0) {
+        cartContainer.innerHTML = '<p>Ваша корзина пуста.</p>';
+    } else {
+        let total = 0; // Общая стоимость товаров
+
+        cart.forEach(product => {
+            total += product.discount_price || product.actual_price;
+
+            // Создаем карточку товара в корзине
+            const productCard = document.createElement('div');
+            productCard.classList.add('cart-item', 'd-flex', 'align-items-center', 'mb-3');
+
+            productCard.innerHTML = `
+                <img src="${product.image_url}" alt="${product.name}" class="cart-item-img" width="50">
+                <div class="cart-item-details ms-3">
+                    <h5 class="cart-item-title">${product.name}</h5>
+                    <p>${product.discount_price ? `<del>${product.actual_price}₽</del>` : ''} <strong>${product.discount_price || product.actual_price}₽</strong></p>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">Рейтинг: ${product.rating}</span>
+                        <span class="badge bg-warning">${product.discount ? `-${product.discount}%` : ''}</span>
+                    </div>
+                </div>
+                <button class="btn btn-danger ms-auto" onclick="removeFromCart(${product.id})">Удалить</button>
+            `;
+
+            cartContainer.appendChild(productCard);
+        });
+
+        // Обновляем общую сумму
+        const cartTotal = document.getElementById('cart-total');
+        cartTotal.textContent = `Общая сумма: ${total}₽`;
+    }
+}
+
+// Функция для удаления товара из корзины
+function removeFromCart(productId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Удаляем товар по ID
+    cart = cart.filter(product => product.id !== productId);
+
+    // Сохраняем обновленную корзину в localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    updateCart(); // Обновляем отображение корзины
+}
+
+// Обновляем корзину при загрузке страницы
+updateCart();
+
+
