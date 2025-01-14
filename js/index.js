@@ -1,125 +1,226 @@
-// Элементы DOM
-const searchInput = document.getElementById("search");
-const searchButton = document.getElementById("search-btn");
-const autocompleteList = document.getElementById("autocomplete-list");
-const catalogContainer = document.getElementById("catalog");
+// Основной URL API
+const API_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
-// API URL
-const apiUrl = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+// Сопоставление категорий
+const CATEGORY_MAP = {
+    "home & kitchen": "Товары для дома и кухни",
+    "tv, audio & cameras": "Аксессуары для камеры",
+    "beauty & health": "Диета и питание",
+    "sports & fitness": "Спорт и фитнес",
+};
 
-// Функция для загрузки товаров с API
-async function fetchProducts(query = '') {
-    const response = await fetch(`${apiUrl}&query=${query}`);
-    const data = await response.json();
-    return data;
+// Функция для загрузки товаров
+function loadProducts(query = "", filters = {}, sort = "") {
+    let url = `${API_URL}&query=${encodeURIComponent(query)}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Ошибка загрузки данных!");
+            return response.json();
+        })
+        .then(data => {
+            const catalog = document.getElementById("catalog");
+            catalog.innerHTML = "";
+
+            if (data.length === 0) {
+                catalog.innerHTML = "<p>Нет товаров, соответствующих вашему запросу.</p>";
+                return;
+            }
+
+            let filteredData = data.filter(product => {
+                const priceToCheck = product.discount_price !== null ? product.discount_price : product.actual_price;
+
+                if (filters.price_from && priceToCheck < filters.price_from) return false;
+                if (filters.price_to && priceToCheck > filters.price_to) return false;
+                if (filters.discount && product.discount_price === null) return false;
+                if (filters.categories && filters.categories.length > 0) {
+                    const categoryMatched = filters.categories.includes(CATEGORY_MAP[product.main_category]);
+                    if (!categoryMatched) return false;
+                }
+
+                return true;
+            });
+
+            if (sort) {
+                filteredData.sort((a, b) => {
+                    const priceA = a.discount_price !== null ? a.discount_price : a.actual_price;
+                    const priceB = b.discount_price !== null ? b.discount_price : a.actual_price;
+
+                    if (sort === "price_asc") return priceA - priceB;
+                    if (sort === "price_desc") return priceB - priceA;
+                    if (sort === "rating_desc") return b.rating - a.rating;
+                });
+            }
+
+            if (filteredData.length === 0) {
+                catalog.innerHTML = "<p>Нет товаров, соответствующих выбранным фильтрам.</p>";
+                return;
+            }
+
+            filteredData.forEach(product => {
+                const productCard = document.createElement("div");
+                productCard.classList.add("col-md-4");
+
+                const discount = product.discount_price
+                    ? ((product.actual_price - product.discount_price) / product.actual_price * 100).toFixed(0)
+                    : null;
+
+                // Генерация звезд для рейтинга
+                const ratingStars = Array(5)
+                    .fill()
+                    .map((_, index) => {
+                        if (index < Math.floor(product.rating)) {
+                            return '<i class="fas fa-star text-warning"></i>'; // Закрашенная звезда
+                        } else if (index < product.rating) {
+                            return '<i class="fas fa-star-half-alt text-warning"></i>'; // Половина звезды
+                        } else {
+                            return '<i class="far fa-star text-muted"></i>'; // Пустая звезда
+                        }
+                    })
+                    .join("");
+
+                productCard.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${product.image_url}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">
+                                ${discount ? `<span class="text-danger">-${discount}%</span><br>` : ""}
+                                <span class="text-muted">${CATEGORY_MAP[product.main_category]}</span><br>
+                                ${discount ? `<del>${product.actual_price}₽</del>` : ""}
+                                <strong>${product.discount_price ? product.discount_price : product.actual_price}₽</strong>
+                            </p>
+                            <div class="mb-2">
+                                ${ratingStars} <!-- Рейтинг в виде звезд -->
+                                <span class="text-muted">(${product.rating.toFixed(1)})</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Купить</a>
+                        </div>
+                    </div>
+                `;
+
+                catalog.appendChild(productCard);
+            });
+        })
+        .catch(error => {
+            console.error("Ошибка при загрузке данных:", error);
+            document.getElementById("catalog").innerHTML = "<p>Произошла ошибка при загрузке данных.</p>";
+        });
 }
 
-// Функция для рендера карточек товаров
-function renderProducts(products) {
-    catalogContainer.innerHTML = ""; // Очистка контейнера
-    if (products.length === 0) {
-        catalogContainer.innerHTML = "<p>Нет товаров, соответствующих вашему запросу.</p>";
-        return;
-    }
 
-    products.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "col-md-4 card";
-        card.innerHTML = `
-            <img src="${product.image_url}" alt="${product.name}" class="card-img-top">
-            <div class="card-body">
-                <h5 class="card-title">${product.name}</h5>
-                <p class="card-text">Рейтинг: ${product.rating}</p>
-                <p class="card-text">
-                    Цена: 
-                    <span class="${product.discount_price ? "line-through" : ""}">
-                        ${product.actual_price} ₽
-                    </span>
-                    ${product.discount_price ? `<span class="text-danger"> ${product.discount_price} ₽</span>` : ""}
-                </p>
-                ${product.discount_price ? `<p class="card-text">Скидка: ${Math.round(((product.actual_price - product.discount_price) / product.actual_price) * 100)}%</p>` : ""}
-                <button class="btn btn-primary" onclick="addToCart(${product.id})">Добавить в корзину</button>
-            </div>
-        `;
-        catalogContainer.appendChild(card);
-    });
-}
+// Загрузка всех товаров при старте страницы
+loadProducts();
 
-// Функция для поиска товаров с автодополнением
-async function fetchAutocomplete(query) {
-    if (query.length < 3) { // Отображаем автодополнение только при 3 и более символах
-        autocompleteList.innerHTML = '';
-        return;
-    }
-
-    const products = await fetchProducts(query);
-    
-    autocompleteList.innerHTML = '';
-    
-    if (products.length === 0) return;
-
-    products.forEach(product => {
-        const listItem = document.createElement("div");
-        listItem.classList.add("list-group-item");
-        listItem.textContent = product.name;
-        listItem.onclick = () => {
-            searchInput.value = product.name;  // Заполняем поле ввода выбранным товаром
-            autocompleteList.innerHTML = '';  // Скрываем список автодополнения
-        };
-        autocompleteList.appendChild(listItem);
-    });
-}
-
-// Обработчик для автодополнения
-searchInput.addEventListener("input", () => {
-    const query = searchInput.value.trim();
-    fetchAutocomplete(query);
+// Обработчик для поиска
+document.getElementById("search-button").addEventListener("click", function () {
+    const query = document.getElementById("search").value.trim();
+    loadProducts(query); // Загружаем товары с учетом запроса
 });
 
-// Функция для отправки запроса на сервер по нажатию кнопки "Найти"
-async function performSearch() {
-    const query = searchInput.value.trim();
-    if (!query) {
-        alert("Введите запрос для поиска.");
+// Обработчик для фильтров
+document.getElementById("filters").addEventListener("submit", function (e) {
+    e.preventDefault(); // Предотвращаем перезагрузку страницы
+
+    // Сбор данных из формы
+    const formData = new FormData(this);
+    const selectedCategories = Array.from(formData.getAll("category")); // Собираем выбранные категории
+
+    const filters = {
+        price_from: parseInt(formData.get("price_from")) || null, // Цена "от"
+        price_to: parseInt(formData.get("price_to")) || null, // Цена "до"
+        discount: formData.has("discount"), // Фильтр "Товары со скидкой"
+        categories: selectedCategories, // Выбранные категории
+    };
+
+    console.log("Применяемые фильтры:", filters); // Для отладки
+
+    // Загружаем товары с учетом фильтров
+    const sort = document.getElementById("sort").value; // Получаем текущую сортировку
+    loadProducts("", filters, sort);
+});
+
+// Обработчик для сортировки
+document.getElementById("sort").addEventListener("change", function () {
+    const sort = this.value; // Получаем выбранное значение сортировки
+    const filters = {
+        price_from: parseInt(document.getElementById("price-from").value) || null, // Цена "от"
+        price_to: parseInt(document.getElementById("price-to").value) || null, // Цена "до"
+        discount: document.querySelector("input[name='discount']").checked, // Фильтр "Товары со скидкой"
+        categories: Array.from(
+            document.querySelectorAll("input[name='category']:checked")
+        ).map(el => el.value), // Собираем выбранные категории
+    };
+
+    console.log("Применяемая сортировка:", sort); // Для отладки
+    loadProducts("", filters, sort); // Загружаем товары с сортировкой
+});
+
+// Основной URL для автодополнения
+// Основной URL для автодополнения
+const AUTOCOMPLETE_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/autocomplete?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+
+// Функция для обработки ввода текста
+document.getElementById("search").addEventListener("input", function () {
+    const input = this.value.trim();
+    const words = input.split(" "); // Разделяем текст на слова
+    const currentWord = words[words.length - 1]; // Берем последнее введенное слово
+
+    // Если последнее слово пустое, скрываем список автодополнений
+    if (!currentWord) {
+        document.getElementById("autocomplete-list").innerHTML = "";
         return;
     }
 
-    const products = await fetchProducts(query);
+    // Запрос к API автодополнения
+    fetch(`${AUTOCOMPLETE_URL}&query=${encodeURIComponent(currentWord)}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Ошибка загрузки автодополнений!");
+            return response.json();
+        })
+        .then(suggestions => {
+            const autocompleteList = document.getElementById("autocomplete-list");
+            autocompleteList.innerHTML = ""; // Очищаем старые варианты
 
-    if (products.length === 0) {
-        catalogContainer.innerHTML = "<p>Нет товаров, соответствующих вашему запросу.</p>";
-        return;
+            // Если сервер вернул пустой массив
+            if (suggestions.length === 0) {
+                autocompleteList.innerHTML = "<div class='list-group-item'>Нет вариантов</div>";
+                return;
+            }
+
+            // Создаем список вариантов автодополнения
+            suggestions.forEach(suggestion => {
+                const item = document.createElement("div");
+                item.classList.add("list-group-item");
+                item.textContent = suggestion;
+
+                // При клике на вариант автодополнения
+                item.addEventListener("click", function () {
+                    words[words.length - 1] = suggestion; // Заменяем последнее слово
+                    document.getElementById("search").value = words.join(" "); // Обновляем текст в поле ввода
+
+                    // Очищаем список автодополнений
+                    autocompleteList.innerHTML = "";
+                });
+
+                autocompleteList.appendChild(item);
+            });
+        })
+        .catch(error => {
+            console.error("Ошибка при загрузке автодополнений:", error);
+        });
+});
+
+// Закрытие списка автодополнения при клике вне поля
+document.addEventListener("click", function (event) {
+    if (!event.target.closest("#autocomplete-list") && event.target.id !== "search") {
+        document.getElementById("autocomplete-list").innerHTML = "";
     }
+});
 
-    // Отображаем товары
-    renderProducts(products);
-}
-
-// Обработчик для кнопки поиска
-searchButton.addEventListener("click", performSearch);
-
-// Функция для добавления в корзину
-function addToCart(productId) {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(productId);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    showNotification("Товар добавлен в корзину", "success");
-}
-
-// Уведомления
-function showNotification(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.className = `notification ${type}`;
-    notification.innerText = message;
-    document.getElementById("notifications").appendChild(notification);
-
-    setTimeout(() => notification.remove(), 5000);
-}
-
-// Инициализация страницы с загрузкой всех товаров
-(async function() {
-    const products = await fetchProducts();
-    renderProducts(products);
-})();
-
-
+// Поиск товаров при клике на кнопку "Найти"
+document.getElementById("search-button").addEventListener("click", function () {
+    const query = document.getElementById("search").value.trim();
+    const sort = document.getElementById("sort").value; // Учитываем выбранный порядок сортировки
+    loadProducts(query, {}, sort); // Загружаем товары с учетом поиска
+});

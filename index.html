@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Интернет-магазин</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Хедер -->
     <header class="bg-light py-3 border-bottom">
         <div class="container d-flex justify-content-between align-items-center">
+            <!-- Логотип -->
             <a href="#" class="text-decoration-none">
                 <h1 class="h3 mb-0">Магазин</h1>
             </a>
-            <div class="search-bar w-50">
+
+            <!-- Поисковая строка -->
+            <div class="search-bar d-flex w-50 position-relative">
                 <input type="text" class="form-control" id="search" placeholder="Поиск товаров">
-                <div id="autocomplete-list" class="list-group position-absolute"></div>
+                <button id="search-button" class="btn btn-primary ms-2">
+                    <i class="fas fa-search"></i> <!-- Иконка поиска -->
+                </button>
+                <!-- Список автодополнения, скрыт по умолчанию -->
+                <div id="autocomplete-list" class="list-group position-absolute w-100" style="max-height: 200px; overflow-y: auto; z-index: 100;"></div>
             </div>
-            <div class="d-flex">
-                <a href="cart.html" class="btn btn-outline-secondary me-2">Корзина</a>
-                <a href="account.html" class="btn btn-outline-secondary">Личный кабинет</a>
+
+            <!-- Иконки -->
+            <div class="d-flex align-items-center">
+                <a href="cart.html" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-shopping-cart"></i> <!-- Иконка корзины -->
+                </a>
+                <a href="account.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-user"></i> <!-- Иконка личного кабинета -->
+                </a>
             </div>
         </div>
     </header>
@@ -41,16 +54,25 @@
                         <div class="mb-3">
                             <label class="form-label">Категория</label>
                             <div>
-                                <label><input type="checkbox" name="category" value="Фитнес аксессуары"> Фитнес аксессуары</label><br>
-                                <label><input type="checkbox" name="category" value="Спорт инвентарь"> Спорт инвентарь</label><br>
-                                <label><input type="checkbox" name="category" value="Электроника"> Электроника</label><br>
-                                <label><input type="checkbox" name="category" value="Одежда"> Одежда</label><br>
-                                <label><input type="checkbox" name="category" value="Питание"> Питание</label>
+                                <label><input type="checkbox" name="category" value="Диета и питание"> Диета и питание</label><br>
+                                <label><input type="checkbox" name="category" value="Спорт и фитнес"> Спорт и фитнес</label><br>
+                                <label><input type="checkbox" name="category" value="Аксессуары для камеры"> Аксессуары для камеры</label><br>
+                                <label><input type="checkbox" name="category" value="Товары для дома и кухни"> Товары для дома и кухни</label>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price-from" class="form-label">Цена от</label>
+                            <input type="number" id="price-from" name="price_from" class="form-control" placeholder="Например, 500">
+                        </div>
+                        <div class="mb-3">
+                            <label for="price-to" class="form-label">Цена до</label>
+                            <input type="number" id="price-to" name="price_to" class="form-control" placeholder="Например, 2000">
+                        </div>
+                        <div class="mb-3">
+                            <label><input type="checkbox" name="discount"> Товары со скидкой</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Применить</button>
                     </form>
-
                 </div>
             </aside>
 
@@ -67,7 +89,6 @@
                 <div id="catalog" class="row g-3">
                     <!-- Карточки товаров будут загружаться динамически -->
                 </div>
-                <button id="load-more" class="btn btn-secondary mt-3 w-100">Загрузить ещё</button>
             </section>
         </div>
     </main>
@@ -84,105 +105,3 @@
     <script src="js/index.js"></script>
 </body>
 </html>
-=======
-    <title>Сайт</title>
-    
-   
-    <link rel="stylesheet" href="styles/style.css">
-</head>
-<body>
-    
-    <header>
-        <h1> Food Construct</h1>
-        <div class="navigator">
-            <nav>
-                <a href="#about">О нас</a>
-                <a href="#">Собрать ланч</a>
-                <a href="#">Заказы</a>
-                <a href="#Contact">Контакты</a>
-            </nav>
-        </div>
-    </header>
-    <main>
-        <img src="image/food.jpg" alt="Фото еды">
-        <section id="about">
-            <h2>О нас</h2>
-
-            <p>
-                Food Construct - доставка бизнес-ланчей в Москве. Мы привезем вам горячую вкусную еду в любую точку города к назначенному времени.
-            </p>
-            
-            <h2>Преимущества Food Construct </h2>
-            <ul>
-                <li>Привозим обед к назначенному времени без опозданий</li>
-                <li>Надежно упаковываем блюда в удобные контейнеры бесплатно</li>
-                <li>Доставляем ланчи весь день с 7:00 до 23:00 </li>
-            </ul>
-            <h2>Топ 5 популярных блюд</h2>
-        
-
-            <table>
-            
-                
-                <tr>
-                    <th>
-                        
-                    </th>
-                    <th>
-                        Названия
-                    </th>
-                    <th>
-                        Кол-во заказов в неделю
-                    </th>
-                    <th>
-                        Цена
-                    </th>
-                
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Лазанья</td>
-                    <td>185</td>
-                    <td>385 Р</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Том Ям с креветками</td>
-                    <td>161</td>
-                    <td>365 Р</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Норвежский суп</td>
-                    <td>144</td>
-                    <td>270 Р</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Жаренная картошка с грибами</td>
-                    <td>132</td>
-                    <td>150 Р</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Котлеты из курицы с картофельным пюре</th>
-                    <td>128</td>
-                    <td>225 Р</td>
-                </tr>
-
-            </table>
-        
-
-        </section>
-    </main>
-    <footer id="Contact">
-        <p> Позвони нам
-         
-        <a class="num" href="#">+7 000 000 00 00</a></p>
-        
-
-    </footer>
-</body>
-
-</html>
->>>>>>> 83bfe6c167b29a1515943250417c3fa3b9e810b2
