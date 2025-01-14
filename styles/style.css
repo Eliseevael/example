@@ -1,0 +1,86 @@
+
+table, th, td{
+    border:1px solid black;
+    font-size: 140%;}
+footer{
+    color: aliceblue;
+    background-color: black;
+    padding: 10px;
+}
+a{
+    text-decoration: none;
+    color: black;
+    padding-right: 40px
+    
+   
+}
+html{
+    scroll-behavior: smooth;
+}
+a:hover{
+    color: rgb(255, 136, 0);
+}
+.num {
+    color: white;
+    
+}
+div{
+    color: black;
+    margin-top: 30px; /* отступ сверху */
+    margin-left: 90px; /* отступ слева */
+    margin-right: 20px; /* отступ справа */
+    margin-bottom: 15px; /* отступ снизу */
+         
+    
+
+}
+h1{
+    color: rgb(255, 136, 0);
+    font-size: 400%;
+    margin-top: 30px; /* отступ сверху */
+    margin-left: 90px; /* отступ слева */
+    margin-right: 20px; /* отступ справа */
+    margin-bottom: 15px; /* отступ снизу */
+}
+nav{
+    font-size: 200%;
+    color:brown;
+    box-sizing: border-box;
+}
+p{
+    margin-top: 30px; /* отступ сверху */
+    margin-left: 90px; /* отступ слева */
+    margin-right: 20px; /* отступ справа */
+    margin-bottom: 15px; /* отступ снизу */
+}
+img{
+    margin-left: 90px; /* отступ слева */
+    width: 1050px;
+    height: 657px;
+}
+h2{
+    margin-left: 90px; /* отступ слева */
+    font-size: 250%;
+}
+
+p{
+    margin-left: 90px; /* отступ слева */
+    font-size: 200%;
+    padding-left: 1px;
+}
+
+li{
+    margin-left: 90px; /* отступ слева */
+    font-size: 200%;
+}
+table, td{
+    border:1px solid black; 
+    margin-left: 90px; /* отступ слева */
+    margin-bottom: 25px; /* отступ снизу */
+    font-size: 150%;
+    border-collapse: collapse;
+    width: 1300px; height: 70px;
+    text-align: center;
+    
+    
+}
