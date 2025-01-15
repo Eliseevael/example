@@ -244,3 +244,34 @@ body {
 #order-form button {
     width: 100%;
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex-grow: 1; /* Контент растягивается, заполняя доступное пространство */
+}
+
+footer {
+    flex-shrink: 0; /* Футер остается внизу и не сжимается */
+}
+/* Стиль для выравнивания кнопок в одну строку */
+.actions {
+    display: flex;
+    gap: 5px; /* Отступы между кнопками */
+    justify-content: flex-start; /* Выравнивание кнопок слева */
+    align-items: center; /* Центрируем кнопки по вертикали */
+}
+/* Устанавливаем один цвет для всех иконок действий */
+/* Фон для иконок */
+
+
