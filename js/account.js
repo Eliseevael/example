@@ -71,24 +71,35 @@ function renderGoods(goodIds) {
 // Просмотр заказа
 async function viewOrder(orderId) {
     try {
-        const response = await fetch(`${API_URL}/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
+        const response = await fetch(`http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
         if (!response.ok) throw new Error(`Ошибка: ${response.statusText}`);
+        
         const order = await response.json();
+        
+        // Формируем данные для отображения
         const details = `
-            <p>Имя: ${order.full_name}</p>
-            <p>Email: ${order.email}</p>
-            <p>Телефон: ${order.phone}</p>
-            <p>Адрес: ${order.delivery_address}</p>
-            <p>Товары: ${renderGoods(order.good_ids)}</p>
-            <p>Комментарий: ${order.comment || "—"}</p>
-            <p>Дата заказа: ${new Date(order.created_at).toLocaleString()}</p>
+            <p><strong>Имя:</strong> ${order.full_name}</p>
+            <p><strong>Email:</strong> ${order.email}</p>
+            <p><strong>Телефон:</strong> ${order.phone}</p>
+            <p><strong>Адрес доставки:</strong> ${order.delivery_address}</p>
+            <p><strong>Дата доставки:</strong> ${order.delivery_date}</p>
+            <p><strong>Временной интервал:</strong> ${order.delivery_interval}</p>
+            <p><strong>Товары:</strong> ${renderGoods(order.good_ids)}</p>
+            <p><strong>Комментарий:</strong> ${order.comment || "—"}</p>
+            <p><strong>Дата создания заказа:</strong> ${new Date(order.created_at).toLocaleString()}</p>
         `;
+
+        // Вставляем данные в модальное окно
         document.getElementById("view-order-details").innerHTML = details;
+
+        // Открываем модальное окно
         new bootstrap.Modal(document.getElementById("viewModal")).show();
     } catch (error) {
+        console.error(error);
         showNotification("Ошибка загрузки данных заказа", "danger");
     }
 }
+
 
 // Уведомления
 function showNotification(message, type = "info") {
