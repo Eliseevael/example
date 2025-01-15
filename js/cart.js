@@ -1,3 +1,4 @@
+// Функция для загрузки корзины
 function loadCart() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const cartItemsContainer = document.getElementById("cart-items");
@@ -31,23 +32,8 @@ function loadCart() {
 
         totalPrice += productPrice * product.quantity;
 
-        // Генерация звезд для рейтинга
-        const ratingStars = Array(5)
-            .fill()
-            .map((_, index) => {
-                if (index < Math.floor(product.rating)) {
-                    return '<i class="fas fa-star text-warning"></i>'; // Закрашенная звезда
-                } else if (index < product.rating) {
-                    return '<i class="fas fa-star-half-alt text-warning"></i>'; // Половина звезды
-                } else {
-                    return '<i class="far fa-star text-muted"></i>'; // Пустая звезда
-                }
-            })
-            .join("");
-
-
         const cartItem = document.createElement("div");
-        cartItem.classList.add("col-md-4"); // Колонка занимает 4 из 12 (3 карточки в строку на больших экранах)
+        cartItem.classList.add("col-md-4");
 
         cartItem.innerHTML = `
             <div class="card h-100">
@@ -60,10 +46,6 @@ function loadCart() {
                         <strong>${productPrice}₽</strong>
                         ${discountPercentage ? `<span class="text-danger ms-2">-${discountPercentage}%</span>` : ""}
                     </p>
-                    <div class="mb-2">
-                        ${ratingStars}
-                        <span class="text-muted">(${product.rating.toFixed(1)})</span>
-                    </div>
                     <p>Количество: ${product.quantity}</p>
                     <button class="btn btn-danger w-100" data-index="${index}">Удалить</button>
                 </div>
@@ -85,18 +67,6 @@ function loadCart() {
     });
 }
 
-// Функция для показа формы оформления заказа
-document.getElementById("checkout-button").addEventListener("click", function () {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const orderFormContainer = document.getElementById("order-form-container");
-
-    if (cart.length === 0) {
-        alert("Корзина пуста. Добавьте товары в корзину перед оформлением заказа.");
-    } else {
-        orderFormContainer.style.display = "block"; // Показываем форму
-    }
-});
-
 // Функция для удаления товара из корзины
 function removeFromCart(index) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -105,8 +75,86 @@ function removeFromCart(index) {
     loadCart(); // Перезагружаем корзину
 }
 
+// Функция для получения списка товаров в корзине (только ID)
+function getCartProductIds() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    return cart.map(product => product.id); // Возвращаем массив ID товаров
+}
+
+// Функция для отправки заказа на API
+document.getElementById("order-form").addEventListener("submit", async function (event) {
+    event.preventDefault(); // Отменяем стандартную отправку формы
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    if (cart.length === 0) {
+        alert("Корзина пуста. Добавьте товары в корзину.");
+        return;
+    }
+
+    function formatDateToDDMMYYYY(dateString) {
+        if (!dateString) {
+          return null; // Или можно вернуть пустую строку "", или любой другой дефолт.
+        }
+        // Проверяем, является ли dateString строкой, или это обьект даты
+        const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+      
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+        
+      }
+
+    // Подготовка данных для отправки
+    const orderData = {
+        comment: document.getElementById("comments").value, // Комментарий
+        created_at: new Date().toISOString(), // Время создания заказа
+        delivery_address: document.getElementById("address").value, // Адрес доставки
+        delivery_date: formatDateToDDMMYYYY(document.getElementById("delivery-date").value), // Дата доставки
+        
+        delivery_interval: String(document.getElementById("time-slot").value), // Время доставки
+        email: document.getElementById("email").value, // Email
+        full_name: document.getElementById("name").value, // ФИО
+        good_ids: getCartProductIds(), // Список товаров в корзине
+        //id: 15, // Пример: ID заказа
+        phone: document.getElementById("phone").value, // Телефон
+        student_id: 10700, // Пример: Студенческий ID
+        subscribe: document.getElementById("newsletter").checked, // Подписка на новости
+        updated_at: new Date().toISOString(), // Время последнего обновления заказа
+    };
+    
+    const apiUrl = "http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+
+    try {
+        // Отправляем запрос на сервер
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orderData),
+        });
+
+        // Обрабатываем возможные ошибки
+        if (!response.ok) {
+            const errorText = await response.text(); // Считываем текст ошибки от сервера
+            throw new Error(`Ошибка сервера: ${response.status}. Ответ: ${errorText}`);
+        }
+
+        // Получаем результат ответа
+        const result = await response.json();
+        console.log("Ответ сервера:", result);
+
+        alert("Ваш заказ успешно оформлен!");
+        localStorage.removeItem("cart"); // Очищаем корзину
+        loadCart(); // Перезагружаем корзину
+    } catch (error) {
+        console.error("Ошибка при отправке данных:", error);
+        alert(`Ошибка при оформлении заказа: ${error.message}`);
+    }
+});
+
+
 // Загрузка корзины при старте страницы
 loadCart();
-
-
-

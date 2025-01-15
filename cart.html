@@ -13,21 +13,12 @@
 
     <header class="bg-light py-3 border-bottom">
         <div class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип -->
-            <a href="#" class="text-decoration-none">
+            <a href="index.html" class="text-decoration-none">
                 <h1 class="h3 mb-0">Магазин</h1>
             </a>
-
-            
-            <!-- Иконки -->
-            <div class="d-flex align-items-center">
-                <a href="index.html" class="btn btn-outline-secondary me-2">
-                    <i class="fas fa-shopping-cart"></i> <!-- Иконка корзины -->
-                </a>
-                <a href="account.html" class="btn btn-outline-secondary">
-                    <i class="fas fa-user"></i> <!-- Иконка личного кабинета -->
-                </a>
-            </div>
+            <a href="account.html" class="btn btn-outline-secondary">
+                <i class="fas fa-user"></i>
+            </a>
         </div>
     </header>
 
@@ -47,54 +38,52 @@
             <h3>Оформление заказа</h3>
             <form id="order-form">
                 <div class="row">
-                    <!-- Левый столбик -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Имя</label>
-                            <input type="text" class="form-control" id="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Телефон</label>
-                            <input type="text" class="form-control" id="phone" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="newsletter">
-                            <label class="form-check-label" for="newsletter">Согласие на получение рассылки</label>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" required>
                     </div>
-
-                    <!-- Правый столбик -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Адрес доставки</label>
-                            <input type="text" class="form-control" id="address" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="delivery-date" class="form-label">Дата доставки</label>
-                            <input type="date" class="form-control" id="delivery-date" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="time-slot" class="form-label">Временной интервал доставки</label>
-                            <select class="form-control" id="time-slot">
-                                <option value="morning">Утро (9:00 - 12:00)</option>
-                                <option value="afternoon">День (12:00 - 17:00)</option>
-                                <option value="evening">Вечер (17:00 - 21:00)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="comments" class="form-label">Комментарий к заказу</label>
-                            <textarea class="form-control" id="comments" rows="3"></textarea>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Телефон</label>
+                        <input type="text" class="form-control" id="phone" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="address" class="form-label">Адрес доставки</label>
+                        <input type="text" class="form-control" id="address" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="delivery-date" class="form-label">Дата доставки</label>
+                        <input type="date" class="form-control" id="delivery-date" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="time-slot" class="form-label">Временной интервал доставки</label>
+                        <select class="form-control" id="time-slot">
+                            <option value="08:00-12:00">8:00-12:00</option>
+                            <option value="12:00-14:00">12:00-14:00</option>
+                            <option value="14:00-18:00">14:00-18:00</option>
+                            <option value="18:00-22:00">18:00-22:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label">Комментарий к заказу</label>
+                    <textarea class="form-control" id="comments" rows="3"></textarea>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="newsletter">
+                    <label class="form-check-label" for="newsletter">Согласие на получение рассылки</label>
                 </div>
                 <div class="text-end mt-3">
                     <h4>Итого: <span id="total-price">0</span></h4>
-                    <button type="button" class="btn btn-secondary me-2" id="reset-button">Сбросить</button>
-                    <button type="submit" class="btn btn-primary" id="checkout-button">Оформить заказ</button>
+                    <button class="btn btn-primary" id="checkout-button">Оформить заказ</button>
+                    <button type="button" class="btn btn-secondary ms-2" id="reset-button">Сбросить</button>
                 </div>
             </form>
         </div>
@@ -107,30 +96,10 @@
     </footer>
 
     <script src="js/cart.js"></script>
-    <script>
-        // Функция для сброса формы
-        document.getElementById("reset-button").addEventListener("click", function() {
-            document.getElementById("order-form").reset();  // Сброс всех полей формы
-
-            // Очистка корзины
-            localStorage.removeItem("cart");
-            loadCart();  // Перезагружаем корзину
-        });
-
-        // Функция для оформления заказа (кнопка отправки формы)
-        document.getElementById("order-form").addEventListener("submit", function(e) {
-            e.preventDefault(); // Предотвращаем обычное отправление формы
-
-            alert("Ваш заказ оформлен!");
-            
-            // Очистить корзину после оформления заказа
-            localStorage.removeItem("cart");
-            loadCart();  // Перезагружаем корзину
-        });
-    </script>
-
 </body>
 </html>
+
+
 
 
 

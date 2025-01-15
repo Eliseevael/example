@@ -284,3 +284,4 @@ function handleBuyClick(event) {
             showNotification("Не удалось добавить товар в корзину.");
         });
 }
+
