@@ -1,5 +1,5 @@
 // Основной URL API
-const API_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
 // Сопоставление категорий
 const CATEGORY_MAP = {
@@ -199,7 +199,7 @@ document.getElementById("sort").addEventListener("change", function () {
 });
 
 
-const AUTOCOMPLETE_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/autocomplete?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+const AUTOCOMPLETE_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/autocomplete?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
 // Функция для обработки ввода текста
 document.getElementById("search").addEventListener("input", function () {
@@ -270,7 +270,7 @@ function handleBuyClick(event) {
     const button = event.target;
     const productId = button.getAttribute("data-id");
 
-    fetch(`http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods/${productId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`)
+    fetch(`https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods/${productId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`)
         .then(response => {
             if (!response.ok) throw new Error("Ошибка загрузки товара!");
             return response.json();
@@ -284,4 +284,3 @@ function handleBuyClick(event) {
             showNotification("Не удалось добавить товар в корзину.");
         });
 }
-

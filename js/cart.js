@@ -124,7 +124,7 @@ document.getElementById("order-form").addEventListener("submit", async function 
         updated_at: new Date().toISOString(), // Время последнего обновления заказа
     };
     
-    const apiUrl = "http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+    const apiUrl = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
     try {
         // Отправляем запрос на сервер

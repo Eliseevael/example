@@ -1,5 +1,5 @@
-const API_URL = "http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
-const GOODS_API_URL = "http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
+const GOODS_API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
 // Кэш для товаров
 let goodsCache = {};
@@ -119,7 +119,7 @@ function renderGoods(goodIds) {
 // Просмотр заказа
 async function viewOrder(orderId) {
     try {
-        const response = await fetch(`http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
+        const response = await fetch(`https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
         if (!response.ok) throw new Error(`Ошибка: ${response.statusText}`);
         
         const order = await response.json();
@@ -186,7 +186,7 @@ async function viewOrder(orderId) {
 
 async function openEditOrderModal(orderId) {
     try {
-        const response = await fetch(`http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
+        const response = await fetch(`https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
         if (!response.ok) throw new Error("Ошибка при получении данных заказа");
 
         const orderData = await response.json();
@@ -225,7 +225,7 @@ async function updateOrder() {
 
     try {
         const response = await fetch(
-            `http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`,
+            `https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`,
             {
                 method: "PUT",
                 headers: {
@@ -271,7 +271,7 @@ document.getElementById("confirm-delete-btn").addEventListener("click", async ()
     if (orderToDelete !== null) {
         try {
             const response = await fetch(
-                `http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderToDelete}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`,
+                `https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderToDelete}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`,
                 {
                     method: "DELETE",
                 }
@@ -315,5 +315,3 @@ async function initialize() {
 
 // Инициализация
 initialize();
-
-
