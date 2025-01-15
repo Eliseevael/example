@@ -31,6 +31,9 @@ function addToCart(product) {
 
     // Показать уведомление
     showNotification('Товар добавлен в корзину!');
+
+    // Отладочное сообщение
+    console.log("Товар добавлен в корзину:", cart);
 }
 
 // Функция для отображения уведомлений
@@ -118,7 +121,7 @@ function loadProducts(query = "", filters = {}, sort = "") {
                     })
                     .join("");
 
-                productCard.innerHTML = `
+                    productCard.innerHTML = `
                     <div class="card h-100">
                         <img src="${product.image_url}" class="card-img-top" alt="${product.name}">
                         <div class="card-body">
@@ -130,10 +133,10 @@ function loadProducts(query = "", filters = {}, sort = "") {
                                 <strong>${product.discount_price ? product.discount_price : product.actual_price}₽</strong>
                             </p>
                             <div class="mb-2">
-                                ${ratingStars} <!-- Рейтинг в виде звезд -->
+                                ${ratingStars}
                                 <span class="text-muted">(${product.rating.toFixed(1)})</span>
                             </div>
-                            <button class="btn btn-primary" onclick="addToCart(${JSON.stringify(product)})">Купить</button>
+                            <button class="btn btn-primary" data-id="${product.id}" onclick="handleBuyClick(event)">Купить</button>
                         </div>
                     </div>
                 `;
@@ -146,6 +149,7 @@ function loadProducts(query = "", filters = {}, sort = "") {
             document.getElementById("catalog").innerHTML = "<p>Произошла ошибка при загрузке данных.</p>";
         });
 }
+
 
 // Загрузка всех товаров при старте страницы
 loadProducts();
@@ -194,7 +198,7 @@ document.getElementById("sort").addEventListener("change", function () {
     loadProducts("", filters, sort); // Загружаем товары с сортировкой
 });
 
-// Основной URL для автодополнения
+
 const AUTOCOMPLETE_URL = "http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/autocomplete?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371";
 
 // Функция для обработки ввода текста
@@ -262,61 +266,21 @@ document.getElementById("search-button").addEventListener("click", function () {
     loadProducts(query, {}, sort); // Загружаем товары с учетом поиска
 });
 
-// Функция для обновления корзины на странице
-function updateCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartContainer = document.getElementById('cart-items'); // Контейнер для отображения товаров в корзине
+function handleBuyClick(event) {
+    const button = event.target;
+    const productId = button.getAttribute("data-id");
 
-    cartContainer.innerHTML = ''; // Очищаем контейнер
-
-    if (cart.length === 0) {
-        cartContainer.innerHTML = '<p>Ваша корзина пуста.</p>';
-    } else {
-        let total = 0; // Общая стоимость товаров
-
-        cart.forEach(product => {
-            total += product.discount_price || product.actual_price;
-
-            // Создаем карточку товара в корзине
-            const productCard = document.createElement('div');
-            productCard.classList.add('cart-item', 'd-flex', 'align-items-center', 'mb-3');
-
-            productCard.innerHTML = `
-                <img src="${product.image_url}" alt="${product.name}" class="cart-item-img" width="50">
-                <div class="cart-item-details ms-3">
-                    <h5 class="cart-item-title">${product.name}</h5>
-                    <p>${product.discount_price ? `<del>${product.actual_price}₽</del>` : ''} <strong>${product.discount_price || product.actual_price}₽</strong></p>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2">Рейтинг: ${product.rating}</span>
-                        <span class="badge bg-warning">${product.discount ? `-${product.discount}%` : ''}</span>
-                    </div>
-                </div>
-                <button class="btn btn-danger ms-auto" onclick="removeFromCart(${product.id})">Удалить</button>
-            `;
-
-            cartContainer.appendChild(productCard);
+    fetch(`http://lab8-api.std-900.ist.mospolytech.ru/exam-2024-1/api/goods/${productId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`)
+        .then(response => {
+            if (!response.ok) throw new Error("Ошибка загрузки товара!");
+            return response.json();
+        })
+        .then(product => {
+            console.log("Добавляемый товар:", product); // Для отладки
+            addToCart(product);
+        })
+        .catch(error => {
+            console.error("Ошибка при добавлении товара в корзину:", error);
+            showNotification("Не удалось добавить товар в корзину.");
         });
-
-        // Обновляем общую сумму
-        const cartTotal = document.getElementById('cart-total');
-        cartTotal.textContent = `Общая сумма: ${total}₽`;
-    }
 }
-
-// Функция для удаления товара из корзины
-function removeFromCart(productId) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // Удаляем товар по ID
-    cart = cart.filter(product => product.id !== productId);
-
-    // Сохраняем обновленную корзину в localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    updateCart(); // Обновляем отображение корзины
-}
-
-// Обновляем корзину при загрузке страницы
-updateCart();
-
-

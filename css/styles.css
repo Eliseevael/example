@@ -196,3 +196,51 @@ body {
 .list-group-item:hover {
     background-color: #f8f9fa;
 }
+
+#cart-items {
+    margin-top: 20px;
+}
+
+#cart-items .card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#cart-items .card img {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.card-img-container {
+    height: 150px; /* Фиксированная высота контейнера изображения */
+    overflow: hidden; /* Скрывает выходящие за границы части */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-img-container img {
+    height: 100%; /* Адаптивное масштабирование изображения */
+    width: auto; /* Сохраняем пропорции изображения */
+    object-fit: cover; /* Подрезаем изображение, чтобы оно заполнило весь контейнер */
+}
+
+#order-form-container {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+    background-color: #f9f9f9;
+    padding-bottom: 20px;
+}
+
+#order-form h3 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+#order-form .form-control {
+    border-radius: 0.25rem;
+}
+
+#order-form button {
+    width: 100%;
+}
