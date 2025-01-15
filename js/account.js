@@ -48,7 +48,7 @@ function renderOrders(orders) {
                 <button class="btn btn-info btn-sm me-2" onclick="viewOrder(${order.id})">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn btn-warning btn-sm me-2" onclick="editOrder(${order.id})">
+                <button class="btn btn-warning btn-sm me-2 edit-order" data-id="${order.id}">
                     <i class="fas fa-edit"></i>
                 </button>
                 <button class="btn btn-danger btn-sm" onclick="deleteOrder(${order.id})">
@@ -57,6 +57,14 @@ function renderOrders(orders) {
             </td>
         `;
         ordersTable.appendChild(row);
+    });
+
+    // Добавляем обработчики для кнопок редактирования
+    document.querySelectorAll(".edit-order").forEach(button => {
+        button.addEventListener("click", async function () {
+            const orderId = this.getAttribute("data-id");
+            await openEditOrderModal(orderId);  // Открытие модального окна редактирования
+        });
     });
 }
 
@@ -100,6 +108,81 @@ async function viewOrder(orderId) {
     }
 }
 
+// Открытие модального окна редактирования
+async function openEditOrderModal(orderId) {
+    try {
+        const response = await fetch(`http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`);
+        if (!response.ok) throw new Error("Ошибка при получении данных заказа");
+
+        const orderData = await response.json();
+
+        // Заполняем форму редактирования данными заказа
+        document.getElementById("edit-order-id").value = orderData.id;
+        document.getElementById("edit-name").value = orderData.full_name;
+        document.getElementById("edit-email").value = orderData.email;
+        document.getElementById("edit-phone").value = orderData.phone;
+        document.getElementById("edit-address").value = orderData.delivery_address;
+        document.getElementById("edit-delivery-date").value = orderData.delivery_date;
+        document.getElementById("edit-delivery-time").value = orderData.delivery_interval;
+        document.getElementById("edit-comments").value = orderData.comment;
+
+        // Открываем модальное окно редактирования
+        const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+        editModal.show();
+    } catch (error) {
+        console.error(error);
+        showNotification("Ошибка при загрузке заказа", "danger");
+    }
+}
+
+// Обновление заказа
+async function updateOrder() {
+    const orderId = document.getElementById("edit-order-id").value;
+    const updatedOrder = {
+        full_name: document.getElementById("edit-name").value,
+        email: document.getElementById("edit-email").value,
+        phone: document.getElementById("edit-phone").value,
+        delivery_address: document.getElementById("edit-address").value,
+        delivery_date: document.getElementById("edit-delivery-date").value,
+        delivery_interval: document.getElementById("edit-delivery-time").value,
+        comment: document.getElementById("edit-comments").value,
+    };
+
+    try {
+        const response = await fetch(
+            `http://api.std-900.ist.mospolytech.ru/exam-2024-1/api/orders/${orderId}?api_key=28d90ad7-799e-4507-bc4a-dec5813b2371`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedOrder),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Ошибка обновления: ${response.statusText}`);
+        }
+
+        showNotification("Заказ успешно обновлен", "success");
+
+        // Закрыть модальное окно
+        const editModal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
+        editModal.hide();
+
+        // Обновить данные на странице
+        await loadOrders();
+    } catch (error) {
+        console.error(error);
+        showNotification("Не удалось обновить заказ", "danger");
+    }
+}
+
+// Привязка формы редактирования к обработчику
+document.getElementById("edit-order-form").addEventListener("submit", async (event) => {
+    event.preventDefault(); // Отключаем стандартное поведение отправки формы
+    await updateOrder(); // Вызываем функцию обновления заказа
+});
 
 // Уведомления
 function showNotification(message, type = "info") {
@@ -123,4 +206,5 @@ async function initialize() {
 
 // Инициализация
 initialize();
+
 

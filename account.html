@@ -13,60 +13,29 @@
     <header class="bg-light py-3 border-bottom">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="index.html" class="text-decoration-none">
-                <h1 class="h3 mb-0">Магазин</h1>
+                <h1 class="h3 mb-0">Мой Личный Кабинет</h1>
             </a>
-            <div class="d-flex align-items-center">
-                <a href="index.html" class="btn btn-outline-secondary me-2">
-                    <i class="fas fa-home"></i>
-                </a>
-                <a href="cart.html" class="btn btn-outline-secondary">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
-            </div>
+            <a href="logout.html" class="btn btn-danger">Выход</a>
         </div>
     </header>
 
-    <!-- Уведомления -->
-    <div id="notifications" class="container mt-3" style="display:none;"></div>
+    <div class="container mt-4">
+        <div id="notifications"></div>
+        <table id="orders-table" class="table table-bordered table-striped">
+            <!-- Здесь будут отображаться заказы -->
+        </table>
+    </div>
 
-    <main class="container my-4">
-        <h2>Личный кабинет</h2>
-        <div id="orders-section">
-            <h3>Заказы</h3>
-            <table class="table table-bordered table-hover mt-3">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Дата заказа</th>
-                        <th>Состав</th>
-                        <th>Итого</th>
-                        <th>Дата и время доставки</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-table">
-                    <!-- Записи заказов будут добавлены динамически -->
-                </tbody>
-            </table>
-        </div>
-    </main>
-
-    <footer class="bg-light py-3 border-top">
-        <div class="container text-center">
-            <p class="mb-0">© 2025 Магазин. Все права защищены.</p>
-        </div>
-    </footer>
-
-    <!-- Модальное окно просмотра -->
+    <!-- Модальное окно для просмотра заказа -->
     <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel">Просмотр заказа</h5>
+                    <h5 class="modal-title" id="viewModalLabel">Детали заказа</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
-                <div class="modal-body">
-                    <p id="view-order-details">Данные заказа будут загружены...</p>
+                <div class="modal-body" id="view-order-details">
+                    <!-- Здесь будут отображаться детали заказа -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -75,77 +44,56 @@
         </div>
     </div>
 
-    <!-- Модальное окно редактирования -->
+    <!-- Модальное окно для редактирования заказа -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Редактирование заказа</h5>
+                    <h5 class="modal-title" id="editModalLabel">Редактировать заказ</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="edit-order-form">
+                <form id="edit-order-form">
+                    <div class="modal-body">
                         <input type="hidden" id="edit-order-id">
                         <div class="mb-3">
                             <label for="edit-name" class="form-label">Имя</label>
-                            <input type="text" id="edit-name" class="form-control" required>
+                            <input type="text" class="form-control" id="edit-name" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-email" class="form-label">Email</label>
-                            <input type="email" id="edit-email" class="form-control" required>
+                            <input type="email" class="form-control" id="edit-email" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-phone" class="form-label">Телефон</label>
-                            <input type="text" id="edit-phone" class="form-control" required>
+                            <input type="tel" class="form-control" id="edit-phone" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-address" class="form-label">Адрес доставки</label>
-                            <input type="text" id="edit-address" class="form-control" required>
+                            <input type="text" class="form-control" id="edit-address" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-delivery-date" class="form-label">Дата доставки</label>
-                            <input type="date" id="edit-delivery-date" class="form-control" required>
+                            <input type="date" class="form-control" id="edit-delivery-date" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-delivery-time" class="form-label">Временной интервал доставки</label>
-                            <select id="edit-delivery-time" class="form-select">
-                                <option value="08:00-12:00">8:00-12:00</option>
-                                <option value="12:00-14:00">12:00-14:00</option>
-                                <option value="14:00-18:00">14:00-18:00</option>
-                                <option value="18:00-22:00">18:00-22:00</option>
-                            </select>
+                            <label for="edit-delivery-time" class="form-label">Время доставки</label>
+                            <input type="text" class="form-control" id="edit-delivery-time" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-comments" class="form-label">Комментарий</label>
-                            <textarea id="edit-comments" class="form-control" rows="3"></textarea>
+                            <textarea class="form-control" id="edit-comments"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно удаления -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Удаление заказа</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить заказ?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete-button">Да</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/account.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/account.js"></script>
 </body>
 </html>
